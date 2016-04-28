@@ -44,6 +44,7 @@ const genRes = (method, headers, reqPath, data) => {
 const createNote = text => {
 	let id = genId()
 	let note = {
+		id,
 		text,
 		createdAt: new Date()
 	}
@@ -62,8 +63,9 @@ const updateNote = (id, text) => {
 	if(!note) return
 
 	note = {
+		id,
 		text,
-		createdAt: new Date()
+		updatedAt: new Date()
 	}
 	notes[id] = note
 
@@ -95,14 +97,17 @@ const app = http.createServer((req, res)=>{
 	let reqUrl = req.url
 	let method = req.method
 	let id = reqUrl.substr(reqUrl.lastIndexOf('/') + 1)
-	console.log(reqUrl);
+	let data = ''
 	let option = {
 		id
 	}
 
-	console.log(option);
+	console.log( method + ' ' + reqUrl + '\n' + JSON.stringify(option, null , 4))
 
-	let data = ''
+
+
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+	res.setHeader('Content-Type','text/plain')
 
 	if(method === 'POST' || method === 'PUT'){
 		req.on('data', (chunk) => {
@@ -110,11 +115,17 @@ const app = http.createServer((req, res)=>{
 		})
 
 		req.on('end', () => {
-			option.text = JSON.parse(data).text;
-			res.end(JSON.stringify(next(method, option)))
+			option.text = JSON.parse(data).text
+			let body = JSON.stringify(next(method, option))
+			console.log(body);
+			res.end(body)
 		})
 	}else{
-		res.end(JSON.stringify(next(method, option)))
+		console.log('get/delete')
+		let body = JSON.stringify(next(method, option))
+		//console.log(body)
+		//res.write('haha','utf-8')
+		res.end(body,'utf-8')
 	}
 
 })

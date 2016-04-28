@@ -24,10 +24,17 @@ const notes = (state = { entries: [] }, action) => {
       					didInvalidate: false
 			})
 		case RECIEVE_POSTS : 
+			let entries = []
+			for(let x in action.posts){
+				let note = action.posts[x]
+				note.id = x
+				entries.push(note)
+			}
+
 			return Object.assign({}, state, {
 				    	isFetching: false,
       					didInvalidate: false,
-      					entries: action.posts
+      					entries
 			})
 		case 'ADD_NOTE':
 /*			return [

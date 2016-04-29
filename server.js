@@ -51,6 +51,8 @@ const createNote = text => {
 	notes[id] = note
 
 	myEmitter.emit('noteChanged')
+
+	return note
 }
 
 const getNote = id => {
@@ -70,12 +72,16 @@ const updateNote = (id, text) => {
 	notes[id] = note
 
 	myEmitter.emit('noteChanged')
+
+	return
 }
 
 const deleteNote = id => {
 	delete notes[id]
 
 	myEmitter.emit('noteChanged')
+
+	return
 }
 
 const getNotes = () => notes
@@ -107,6 +113,7 @@ const app = http.createServer((req, res)=>{
 
 
 	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+	res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT')
 	res.setHeader('Content-Type','text/plain')
 
 	if(method === 'POST' || method === 'PUT'){
@@ -115,18 +122,22 @@ const app = http.createServer((req, res)=>{
 		})
 
 		req.on('end', () => {
+			console.log('Uploaded data:' + data)
 			option.text = JSON.parse(data).text
-			let body = JSON.stringify(next(method, option))
-			console.log(body);
+			let body = JSON.stringify(next(method, option)||{})
+			console.log('returned data:'+body)
 			res.end(body)
 		})
 	}else{
 		console.log('get/delete')
-		let body = JSON.stringify(next(method, option))
-		//console.log(body)
-		//res.write('haha','utf-8')
+		let body = JSON.stringify(next(method, option)||{})
 		res.end(body,'utf-8')
 	}
+
+	req.on('error',error => {
+		console.log('An unexpected error happened')
+		console.log(error)
+	})
 
 })
 

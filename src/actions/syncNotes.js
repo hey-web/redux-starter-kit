@@ -21,8 +21,6 @@ const recievePosts = (json) => {
   }
 }
 
-//export const FETCH_NOTES = 'FETCH_NOTE'
-//export const RECIEVE_NOTES = 'RECIEVE_NOTES'
 export const fetchNotes = () => {
 	return dispatch => {
 
@@ -42,20 +40,70 @@ const sendAddNote = () => {
   }
 }
 export const RECEIVE_ADD_NOTE = 'RECEIVE_ADD_NOTE'
-const receiveAddNote = (json) => {
+const receiveAddNote = (text, json) => {
   return {
     type: RECEIVE_ADD_NOTE,
-    id:　json.id
+    id:　json.id,
+    text
   }
 }
 export const addNote = text => {
   return dispatch => {
     dispatch(sendAddNote())
 
-    return fetch('POST', serverPath)
-      .then(response => response.json())
-      .then(json => dispatch(receiveAddNote(json)))
+    return fetch(serverPath, {
+      method: 'POST',
+      body: JSON.stringify({ text:text })
+    })
+    .then(response => response.json())
+    .then(json => dispatch(receiveAddNote(text, json)))
   }
 }
 // 3 Sync note change to server
+export const SEND_UPDATE_NOTE = 'SEND_UPDATE_NOTE'
+const sendUpdateNote = () => {
+  return {
+    type: SEND_UPDATE_NOTE
+  }
+}
+
+export const RECEIVE_UPDATE_NOTE = 'RECEIVE_UPDATE_NOTE'
+const receiveUpdateNote = () => {
+  return {
+    type: RECEIVE_UPDATE_NOTE
+  }
+}
+
+export const updateNote = (id, text) => {
+  return dispatch => {
+    dispatch(sendUpdateNote)
+    return fetch('PUT', serverPath)
+      .then( () => dispatch(receiveUpdateNote()) )
+  }
+}
 // 4 Drop note in server
+export const SEND_DROP_NOTE = 'SEND_DROP_NOTE'
+const sendDropNote = id => {
+  return {
+    type: SEND_DROP_NOTE,
+    id
+  }
+} 
+export const RECEIVE_DROP_NOTE = 'RECEIVE_DROP_NOTE'
+const receiveDropNote = id => {
+  return {
+    type: RECEIVE_DROP_NOTE,
+    id
+  }
+}
+
+export const dropNote = id => {
+  return dispatch => {
+    dispatch(sendDropNote(id))
+
+    return fetch([serverPath,id].join('/'), {
+        method: 'DELETE'
+    })
+    .then(() => dispatch(receiveDropNote(id)) )
+  }
+}

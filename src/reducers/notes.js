@@ -1,4 +1,5 @@
-import { REQUEST_POSTS, RECIEVE_POSTS } from '../actions/syncNotes'
+import { REQUEST_POSTS, RECIEVE_POSTS, SEND_ADD_NOTE, RECEIVE_ADD_NOTE,
+		SEND_DROP_NOTE, RECEIVE_DROP_NOTE } from '../actions/syncNotes'
 
 const note = (state, action) => {
 	switch (action.type) {
@@ -12,9 +13,6 @@ const note = (state, action) => {
 	}
 }
 
-const posts = (state = { isFetching: false, didInvalidate: false}, action) => {
-
-}
 
 const notes = (state = { entries: [] }, action) => {
 	switch (action.type) {
@@ -35,6 +33,23 @@ const notes = (state = { entries: [] }, action) => {
 				    	isFetching: false,
       					didInvalidate: false,
       					entries
+			})
+		case SEND_ADD_NOTE: 
+			return Object.assign({}, state, {
+				    	isFetching: false,
+      					didInvalidate: false
+			})
+		case RECEIVE_ADD_NOTE:
+			state.entries.push({ id: action.id, text: action.text })
+			return Object.assign({}, state, {
+				    	isFetching: false,
+      					didInvalidate: false
+			})
+		case RECEIVE_DROP_NOTE:
+			state.entries.splice(state.entries.findIndex((note)=>{ return note.id === action.id }), 1)
+			return Object.assign({}, state, {
+				    	isFetching: false,
+      					didInvalidate: false
 			})
 		case 'ADD_NOTE':
 /*			return [

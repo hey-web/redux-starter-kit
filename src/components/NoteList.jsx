@@ -1,12 +1,14 @@
 import React, { PropTypes } from 'react'
 import Note from './Note'
 
-const NoteList = ({ notes }) => (
+const NoteList = ({ notes, onUpdateNote, onDropNote }) => (
   <ul>
     {notes.entries.map(note =>
       <Note
         key={note.id}
         {...note}
+        onUpdate = { (text) => onUpdateNote(note.id,text)}
+        onDrop = { () => onDropNote(note.id)}
       />
     )}
   </ul>
@@ -20,9 +22,9 @@ NoteList.propTypes = {
       id: PropTypes.string.isRequired,
       text: PropTypes.string.isRequired
     })).isRequired
-  }).isRequired
-  //,
-  //onTodoClick: PropTypes.func.isRequired
+  }).isRequired,
+  onUpdateNote: PropTypes.func.isRequired,
+  onDropNote: PropTypes.func.isRequired
 }
 
 export default NoteList

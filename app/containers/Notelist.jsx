@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { addNote, updateNote, dropNote} from '../actions/syncNotes'
+import { addNote} from '../actions'
 import NoteList from '../components/NoteList'
 
 const mapStateToProps = (state) => {
@@ -10,15 +10,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onAddNote: (text) => {dispatch(addNote(text))},
-    onUpdateNote: (id,text) => {dispatch(updateNote(id, text))},
-    onDropNote: (id) => {dispatch(dropNote(id))}
+    
   }
 }
 
 const VisibleTodoList = connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
+  //,mapDispatchToProps
 )(NoteList)
 
 export default VisibleTodoList

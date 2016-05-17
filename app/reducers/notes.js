@@ -1,4 +1,5 @@
-import { REQUEST_POSTS, RECIEVE_POSTS } from '../actions/syncNotes'
+import { REQUEST_POSTS, RECIEVE_POSTS, SEND_ADD_NOTE, RECEIVE_ADD_NOTE, SEND_DROP_NOTE, RECEIVE_DROP_NOTE, RECEIVE_UPDATE_NOTE } from '../actions/syncNotes'
+import { EDIT_NOTE, EDITING_NOTE } from '../actions'
 
 const note = (state, action) => {
 	switch (action.type) {
@@ -12,11 +13,7 @@ const note = (state, action) => {
 	}
 }
 
-const posts = (state = { isFetching: false, didInvalidate: false}, action) => {
-
-}
-
-const notes = (state = { entries: [] }, action) => {
+const notes = (state = { entries: {} }, action) => {
 	switch (action.type) {
 		case REQUEST_POSTS : 
 			return Object.assign({}, state, {
@@ -27,14 +24,23 @@ const notes = (state = { entries: [] }, action) => {
 			return Object.assign({}, state, {
 				    	isFetching: false,
       					didInvalidate: false,
-      					entries: action.posts
+      					entries: action.post
 			})
-		case 'ADD_NOTE':
-/*			return [
-		        ...state,
-		        note(undefined, action)
-		      ]*/
-		  	return Object.assign({}, state, {entries:[...state.entries, note(undefined, action)]})
+		case RECEIVE_ADD_NOTE:
+			state.entries[action.post.id] = action.post
+		  	return Object.assign({}, state)
+		case RECEIVE_DROP_NOTE:
+			delete state.entries[action.id]
+			return Object.assign({}, state)
+		case EDIT_NOTE:
+			state.entries[action.id].editing = true
+			return Object.assign({}, state)
+		case EDITING_NOTE:
+			state.entries[action.id].text = action.text
+			return Object.assign({}, state)
+		case RECEIVE_UPDATE_NOTE: 
+			state.entries[action.id].editing = false
+			return Object.assign({}, state)
 		default: 
 			return state
 	}

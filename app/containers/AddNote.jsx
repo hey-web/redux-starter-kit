@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { addNote } from '../actions'
+import { addNote } from '../actions/syncNotes'
 
 let AddNote = ({ dispatch }) => {
   let textArea

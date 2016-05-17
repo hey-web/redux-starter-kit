@@ -8,12 +8,12 @@ const basePath = path.dirname(process.argv[1])
 const port = process.argv[2] || 4000
 const dataFile = './data/index.json'
 
-const EventEmitter = require('events');
+const EventEmitter = require('events')
 class MyEmitter extends EventEmitter {}
-const myEmitter = new MyEmitter();
+const myEmitter = new MyEmitter()
 
 
-let notes = require(dataFile).notes
+let notes = fs.existsSync(dataFile) ? require(dataFile).notes : {}
 
 //Emitter to monitor notes changed
 const syncNotes = () => {
@@ -26,7 +26,7 @@ const syncNotes = () => {
 myEmitter.on('noteChanged', () => {
 	//Call sync operation when notes changed
 	syncNotes()
-});
+})
 
 
 const genId = () => { return (Math.random() + '').substring(2)}
@@ -128,10 +128,14 @@ const app = http.createServer((req, res)=>{
 			console.log('returned data:'+body)
 			res.end(body)
 		})
-	}else{
+	}else if(method === 'GET' || method === 'DELETE'){
 		console.log('get/delete')
 		let body = JSON.stringify(next(method, option)||{})
 		res.end(body,'utf-8')
+	}else{
+		res.statusCode = 200
+		res.statusMessage = 'OK'
+		res.end('')
 	}
 
 	req.on('error',error => {
